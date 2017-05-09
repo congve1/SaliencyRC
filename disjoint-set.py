@@ -1,3 +1,4 @@
+# disjoint-set forests using union-by-rank and path compression(sort of)
 class uni_elt:
     def __init__(self,rank=0,p=0,size=0):
         self.rank= rank
@@ -17,6 +18,18 @@ class universe:
             self.elts[x].p = y
             self.elts[y].size += self.elts[x].size
 
+    def size(self,x):
+        return self.elts[x].size
+
+    def nu_sets(self):
+        return self.num
+
+    def find(self,x):
+        y = x
+        while(y != self.elts[y].p):
+            y = self.elts[y].p
+        self.elts[x].p = y
+        return y
 
 
 
