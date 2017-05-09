@@ -1,14 +1,14 @@
 # disjoint-set forests using union-by-rank and path compression(sort of)
-class uni_elt:
+class Uni_elt:
     def __init__(self,rank=0,p=0,size=0):
         self.rank= rank
         self.p = p
         self.size = size
 
-class universe:
+class Universe:
     def __init__(self,elements):
         self.num = elements
-        self.elts = [uni_elt(rank=0,p=i,size=1) for i in range(elements)]
+        self.elts = [Uni_elt(rank=0,p=i,size=1) for i in range(elements)]
 
     def join(self,x,y):
         if(self.elts[x].rank > self.elts[y].rank):
