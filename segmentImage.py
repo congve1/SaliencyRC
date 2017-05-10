@@ -53,7 +53,7 @@ def SegmentImage(src3f,imgInd,sigma=0.5,c=200,min_size=50):
 
     # pick random colors for each components
     marker = {}
-    imgInd = np.zeros(smImg3f.shape,np.int32)
+    imgInd = np.zeros((smImg3f.shape[0],smImg3f.shape[1]),np.int32)
     idxNum = 0
     for y in height_range:
         for x in width_range:
