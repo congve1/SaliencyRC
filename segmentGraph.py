@@ -28,8 +28,7 @@ def  segment_graph(nu_vertices,nu_edges,edges,c):
         a = u.find(edge.a)
         b = u.find(edge.b)
         if a != b:
-            if edge.w <= thresholds[a] and \
-                edge.w <= thresholds[b]:
+            if edge.w <= thresholds[a] and edge.w <= thresholds[b]:
                 u.join(a,b)
                 a = u.find(a)
                 thresholds[a] = edge.w + threshold(u.size(a),c)
