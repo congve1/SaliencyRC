@@ -18,7 +18,7 @@ c: constant for threshold function
 """
 def  segment_graph(nu_vertices,nu_edges,edges,c):
     tmp = edges[:nu_edges]
-    tmp.sort()
+    tmp.sort(key=lambda edge: edge.w)
     edges[:nu_edges] = tmp
     u = disjointSet.Universe(nu_vertices)
     thresholds = [threshold(1,c) for i in range(nu_vertices)]

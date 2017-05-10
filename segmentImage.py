@@ -8,7 +8,7 @@ def diff(img3f,x1,y1,x2,y2):
     p2 = img3f[y2,x2]
     return np.sqrt(np.sum(np.power(p1-p2,2)))
 
-def SegmentImage(src3f,imgInd,sigma,c,min_size):
+def SegmentImage(src3f,imgInd,sigma=0.5,c=200,min_size=50):
     width = src3f.shape[1]
     height = src3f.shape[0]
     smImg3f = np.zeros(src3f.shape,dtype=src3f.dtype)
@@ -56,7 +56,6 @@ def SegmentImage(src3f,imgInd,sigma,c,min_size):
     imgInd = np.zeros(smImg3f.shape,np.int32)
     idxNum = 0
     for y in height_range:
-
         for x in width_range:
             comp = u.find(y * width + x)
             if comp not in marker.keys():
