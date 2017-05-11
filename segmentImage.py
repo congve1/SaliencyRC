@@ -40,6 +40,8 @@ def SegmentImage(src3f,imgInd,sigma=0.5,c=200,min_size=50):
                 edges[num].b = (y-1) * width + (x+1)
                 edges[num].w = diff(smImg3f,x,y,x+1,y-1)
                 num += 1
+    for i in range(10):
+        print(edges[i].w)
     # segment
     u = segmentGraph.segment_graph(width * height,num,edges,c)
 
@@ -50,6 +52,7 @@ def SegmentImage(src3f,imgInd,sigma=0.5,c=200,min_size=50):
         b = u.find(edges[i].b)
         if ((a != b) and ((u.size(a) < min_size) or (u.size(b) < min_size))):
             u.join(a,b)
+
 
     # pick random colors for each components
     marker = {}

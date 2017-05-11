@@ -17,7 +17,9 @@ class Universe:
         else:
             self.elts[x].p = y
             self.elts[y].size += self.elts[x].size
-
+            if self.elts[x].rank == self.elts[y].rank:
+                self.elts[y].rank += 1
+        self.num -= 1
     def size(self,x):
         return self.elts[x].size
 
