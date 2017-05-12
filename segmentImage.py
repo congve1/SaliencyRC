@@ -30,12 +30,12 @@ def SegmentImage(src3f,imgInd,sigma=0.5,c=200,min_size=50):
                 edges[num].b = (y+1) * width + x
                 edges[num].w = diff(smImg3f,x,y,x,y+1)
                 num += 1
-            if x < (width - 1) and y < (height-1):
+            if (x < (width - 1)) and (y < (height-1)):
                 edges[num].a = y * width + x
                 edges[num].b = (y+1)*width + (x+1)
                 edges[num].w = diff(smImg3f,x,y,x+1,y+1)
                 num += 1
-            if x < (width - 1) and y > 0:
+            if (x < (width - 1)) and y > 0:
                 edges[num].a = y * width + x
                 edges[num].b = (y-1) * width + (x+1)
                 edges[num].w = diff(smImg3f,x,y,x+1,y-1)
