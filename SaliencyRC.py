@@ -9,6 +9,46 @@ class Region:
         self.ad2c = [ad2c[0],ad2c[1]]
         self.freIdx = []
         self.centroid = [0,0]
+
+def GetHC(img3f):
+    binN,idx1i,binColor3f,colorNums1i = Quantize(img3f)
+    cv2.cvtColor(binColor3f,cv2.COLOR_BGR2Lab,binColor3f)
+    weight1f = np.zeros(colorNums1i.shape,np.float32)
+    cv2.normalize(colorNums1i.astype(np.float32),weight1f,1,0,cv2.NORM_L1)
+    colorSal = np.zeros((1,binN),np.float32)
+    similar = [[] for _ in range(binN)]
+    for i in range(binN):
+        similar[i].append([0.0,i])
+        for j in range(binN):
+            if i != j:
+                dij = dist(binColor3f[0,i],binColor3f[0,j])
+                similar[i].append([dij,j])
+                colorSal[0,i] += weight1f[0,j] * dij
+        similar[i].sort()
+    SmoothBySaliency(colorNums1i,colorSal,0.25,similar)
+    salHC1f = np.zeros((img3f.shape[0],img3f.shape[1]),np.float32)
+    width = img3f.shape[1]
+    height = img3f.shape[0]
+    h_range = range(height)
+    w_range = range(width)
+    for y in h_range:
+        for x in w_range:
+            salHC1f[y,x] = colorSal[0,idx1i[y,x]]
+    cv2.GaussianBlur(salHC1f,(3,3),0,salHC1f)
+    cv2.normalize(salHC1f,salHC1f,0,1,cv2.NORM_MINMAX)
+    return salHC1f
+
+def GetFT(img3f):
+    sal = np.zeros((img3f.shape[0],img3f.shape[1]),np.float32)
+    tImg = cv2.GaussianBlur(img3f,(3,3),0)
+    colorM = cv2.mean(tImg)
+    height = img3f.shape[0]
+    width = img3f.shape[1]
+    for y in range(height):
+        for x in range(width):
+            sal[y,x] = float(sqr(colorM[0] - tImg[y,x,0]) + sqr(colorM[1] - tImg[y,x,1])+sqr(colorM[2] - tImg[y,x,2]))
+    cv2.normalize(sal,sal,0,1,cv2.NORM_MINMAX)
+    return sal
 def GetRC(img3f,sigmaDist=0.4,segK=200,segMinSize=50,segSigma=0.5):
     imgLab3f = img3f.copy()
     cv2.cvtColor(img3f,cv2.COLOR_BGR2Lab,imgLab3f)
