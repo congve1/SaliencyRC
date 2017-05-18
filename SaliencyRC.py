@@ -12,10 +12,11 @@ class Region:
 
 def GetHC(img3f):
     binN,idx1i,binColor3f,colorNums1i = Quantize(img3f)
+    print(binN)
     cv2.cvtColor(binColor3f,cv2.COLOR_BGR2Lab,binColor3f)
     weight1f = np.zeros(colorNums1i.shape,np.float32)
     cv2.normalize(colorNums1i.astype(np.float32),weight1f,1,0,cv2.NORM_L1)
-    colorSal = np.zeros((1,binN),np.float32)
+    colorSal = np.zeros((1,binN),np.float64)
     similar = [[] for _ in range(binN)]
     for i in range(binN):
         similar[i].append([0.0,i])
@@ -25,8 +26,8 @@ def GetHC(img3f):
                 similar[i].append([dij,j])
                 colorSal[0,i] += weight1f[0,j] * dij
         similar[i].sort()
-    SmoothBySaliency(colorNums1i,colorSal,0.25,similar)
-    salHC1f = np.zeros((img3f.shape[0],img3f.shape[1]),np.float32)
+    SmoothBySaliency(np.ones(colorSal.shape,np.int32),colorSal,0.25,similar)
+    salHC1f = np.zeros((img3f.shape[0],img3f.shape[1]),np.float64)
     width = img3f.shape[1]
     height = img3f.shape[0]
     h_range = range(height)
@@ -102,10 +103,11 @@ def Quantize(img3f,ratio=0.95,colorNums=(12,12,12)):
             idx1i[y,x] = int(img3f[y,x,0]*clrTmp[0]) * w[0] + int(img3f[y,x,1] * clrTmp[1]) * w[1] + int(img3f[y,x,2] * clrTmp[2] )
             if idx1i[y,x] not in pallet.keys():
                 pallet[idx1i[y,x]] = 1
-            pallet[idx1i[y,x]] += 1
+            else:
+                pallet[idx1i[y,x]] += 1
     #Find significant colors
     maxNum = 0
-    num = [(pallet[key],key) for key in pallet]
+    num = [(pallet[key],key) for key in pallet] #(num,color) pairs in num
     num.sort(reverse=True)
     maxNum = len(num)
     maxDropNum = int(np.round(height*width*(1-ratio)))
@@ -124,7 +126,7 @@ def Quantize(img3f,ratio=0.95,colorNums=(12,12,12)):
         simIdx = 0
         simVal = (1 << 31) - 1 # int32 max
         for j in range(maxNum):
-            d_ij = dist(color3i[i],color3i[j])
+            d_ij = sqrDist(color3i[i],color3i[j])
             if d_ij < simVal:
                 simVal = d_ij
                 simIdx = j
@@ -379,7 +381,7 @@ def SmoothBySaliency(colorNums1i,sal1f,delta,similar):
             valCrnt += val[j] * (totalDist - dist[j]) * w[j]
         #print(valCrnt,totalDist,totalWeight)
         newSal1d[0,i] = valCrnt / (totalDist * totalWeight)
-        cv2.normalize(newSal1d,sal1f,0,1,cv2.NORM_MINMAX)
+    cv2.normalize(newSal1d,sal1f,0,1,cv2.NORM_MINMAX)
 
 
 
